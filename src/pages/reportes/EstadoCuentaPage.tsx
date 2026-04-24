@@ -35,7 +35,7 @@ export function EstadoCuentaPage() {
     const [busqueda, setBusqueda]     = useState('')
     const [movimientos, setMovimientos] = useState<Movimiento[]>([])
     const [saldoInicial, setSaldoInicial] = useState(0)
-    const [naturaleza, setNaturaleza] = useState<'deudora' | 'acreedora'>('deudora')
+    const [, setNaturaleza] = useState<'deudora' | 'acreedora'>('deudora')
     const [loading, setLoading]       = useState(false)
     const [generado, setGenerado]     = useState(false)
 

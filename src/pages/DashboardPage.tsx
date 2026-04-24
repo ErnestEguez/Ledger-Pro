@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { formatMoneda, mesNombre } from '../lib/utils'
 
 function SinEmpresa() {
-    const { user, signOut } = useAuth()
+    const { user } = useAuth()
     const [reintentando, setReintentando] = useState(false)
 
     function limpiarYSalir() {
@@ -94,7 +94,7 @@ export function DashboardPage() {
                 .eq('estado', 'confirmado'),
 
             supabase.from('lp_periodos')
-                .select('año, mes, estado')
+                .select('*')
                 .eq('empresa_id', empresaActiva.id)
                 .eq('año', año)
                 .eq('mes', mes)

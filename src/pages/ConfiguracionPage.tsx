@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus, Loader2, CheckCircle, Building2, Calendar } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -6,7 +6,7 @@ import type { LpPeriodo } from '../types/conta'
 import { mesNombre } from '../lib/utils'
 
 export function ConfiguracionPage() {
-    const { empresaActiva, user } = useAuth()
+    const { empresaActiva } = useAuth()
     const [periodos, setPeriodos] = useState<LpPeriodo[]>([])
     const [loading, setLoading] = useState(true)
     const [creando, setCreando] = useState(false)

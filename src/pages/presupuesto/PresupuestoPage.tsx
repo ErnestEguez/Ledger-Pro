@@ -5,7 +5,6 @@ import { useAuth } from '../../contexts/AuthContext'
 import { cn, formatMoneda, mesNombre } from '../../lib/utils'
 import type { LpPresupuesto, LpPeriodo, LpCuenta } from '../../types/conta'
 
-interface CeldaKey { cuentaId: string; periodoId: string }
 type GrillaValores = Record<string, Record<string, number>> // cuentaId → periodoId → valor
 
 export function PresupuestoPage() {
@@ -46,7 +45,7 @@ export function PresupuestoPage() {
 
         setPresupuestos(presuData ?? [])
         setPeriodos(periData ?? [])
-        setCuentas(cuentaData ?? [])
+        setCuentas((cuentaData ?? []) as any)
 
         const primerPresu = presuData?.[0]
         if (primerPresu) {
@@ -126,7 +125,7 @@ export function PresupuestoPage() {
     }
 
     const sym  = empresaActiva?.moneda?.simbolo ?? '$'
-    const pres = presupuestos.find(p => p.id === presupuestoId)
+    void presupuestos.find(p => p.id === presupuestoId)
     const totalPorPeriodo = (periodoId: string) =>
         cuentas.reduce((s, c) => s + (grilla[c.id]?.[periodoId] ?? 0), 0)
     const totalGeneral = cuentas.reduce((s, c) =>
