@@ -4,10 +4,12 @@ import {
     LayoutDashboard, BookOpen, FileText, BarChart2,
     Settings, LogOut, ChevronRight, ChevronDown,
     Menu, X, Building2, PiggyBank, TrendingUp, BookMarked, Target,
-    Lock, Zap,
+    Lock, Zap, Shield,
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { cn } from '../lib/utils'
+
+const ADMIN_EMAIL = 'admin@billenniumsystem.com'
 
 interface SidebarItemProps {
     to: string
@@ -75,7 +77,8 @@ const navigation: NavItem[] = [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
-    const { empresaActiva, empresas, setEmpresaActiva, signOut } = useAuth()
+    const { empresaActiva, empresas, setEmpresaActiva, signOut, user } = useAuth()
+    const isAdmin = user?.email === ADMIN_EMAIL
     const location = useLocation()
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(true)
     const [openGroups, setOpenGroups] = React.useState<string[]>(['Reportes'])
@@ -184,7 +187,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </nav>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-slate-100 shrink-0">
+                <div className="p-4 border-t border-slate-100 shrink-0 space-y-1">
+                    {isAdmin && (
+                        <SidebarItem
+                            to="/admin"
+                            icon={Shield}
+                            label="Administración"
+                            active={location.pathname === '/admin'}
+                        />
+                    )}
                     <button
                         onClick={signOut}
                         className="flex items-center gap-3 w-full px-4 py-3 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors group"

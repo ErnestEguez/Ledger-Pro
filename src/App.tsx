@@ -17,6 +17,7 @@ import { PresupuestoPage } from './pages/presupuesto/PresupuestoPage'
 import { CierreContablePage } from './pages/cierre/CierreContablePage'
 import { IntegracionQIPage } from './pages/integracion/IntegracionQIPage'
 import { ConfiguracionPage } from './pages/ConfiguracionPage'
+import { AdminPage } from './pages/admin/AdminPage'
 
 function AppRoutes() {
     return (
@@ -112,6 +113,12 @@ function AppRoutes() {
             <Route path="/configuracion" element={
                 <ProtectedRoute>
                     <Layout><ConfiguracionPage /></Layout>
+                </ProtectedRoute>
+            } />
+
+            <Route path="/admin" element={
+                <ProtectedRoute>
+                    <Layout><AdminPage /></Layout>
                 </ProtectedRoute>
             } />
 
