@@ -16,6 +16,7 @@ import { RealVsPresupuestoPage } from './pages/reportes/RealVsPresupuestoPage'
 import { PresupuestoPage } from './pages/presupuesto/PresupuestoPage'
 import { CierreContablePage } from './pages/cierre/CierreContablePage'
 import { IntegracionQIPage } from './pages/integracion/IntegracionQIPage'
+import { IntegracionSRIPage } from './pages/integracion/IntegracionSRIPage'
 import { ConfiguracionPage } from './pages/ConfiguracionPage'
 import { AdminPage } from './pages/admin/AdminPage'
 
@@ -107,6 +108,12 @@ function AppRoutes() {
             <Route path="/integracion-qi" element={
                 <ProtectedRoute>
                     <Layout><IntegracionQIPage /></Layout>
+                </ProtectedRoute>
+            } />
+
+            <Route path="/integracion-sri" element={
+                <ProtectedRoute>
+                    <Layout><IntegracionSRIPage /></Layout>
                 </ProtectedRoute>
             } />
 

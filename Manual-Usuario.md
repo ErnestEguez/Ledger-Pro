@@ -454,6 +454,168 @@ Para empresas que comienzan desde cero:
 
 ---
 
+## 11. Integración SRI — Compras y Retenciones
+
+Acceso: **Menú lateral → Integración SRI**
+
+`[IMAGEN: Pantalla Integración SRI con tres pestañas: Importar CSV, Comprobantes, Reglas de Mapeo]`
+
+Permite importar los comprobantes electrónicos recibidos desde el SRI (facturas de compras, retenciones, notas de crédito, notas de débito) y generar los asientos contables correspondientes.
+
+> **Requisito previo:** El usuario debe descargar manualmente el archivo TXT/CSV desde el portal del SRI antes de subirlo a Ledger Pro.
+
+---
+
+### 11.1 Cómo descargar el archivo del SRI
+
+1. Ingresa a **SRI en Línea** → `srienlinea.sri.gob.ec`
+2. Ve a **Consultas → Comprobantes Electrónicos Recibidos**
+3. Filtra por período (año/mes) y tipo de comprobante
+4. Haz clic en **Descargar** → guarda el archivo `.txt` en tu computador
+
+---
+
+### 11.2 Importar CSV — Pestaña 1
+
+`[IMAGEN: Pestaña Importar con selectores año/mes/tipo y zona de carga de archivo con vista previa de 10 registros]`
+
+**Paso 1 — Seleccionar período y tipo:**
+- **Año / Mes:** El período al que corresponden los comprobantes
+- **Tipo de comprobante:**
+
+| Opción | Qué incluye |
+|---|---|
+| Facturas de Compras | Facturas que te emitieron como comprador |
+| Retenciones Recibidas | Retenciones que te hicieron como proveedor |
+| Notas de Crédito | NC emitidas a tu favor |
+| Notas de Débito | ND emitidas en tu contra |
+
+**Paso 2 — Seleccionar el archivo:**
+- Clic en **Seleccionar archivo CSV del SRI**
+- Elige el archivo `.txt` descargado del SRI
+- El sistema muestra automáticamente una **vista previa** con los primeros 10 registros detectados
+
+`[IMAGEN: Vista previa con columnas RUC, Proveedor, Número, Fecha, Base 0%, Base Grav., IVA, Total]`
+
+**Paso 3 — Confirmar importación:**
+- Verifica que los datos se ven correctos en la vista previa
+- Clic en **Confirmar importación** (botón verde)
+- El sistema importa los registros nuevos (los duplicados se ignoran automáticamente)
+- Pasa automáticamente a la pestaña **Comprobantes**
+
+---
+
+### 11.3 Comprobantes — Pestaña 2
+
+`[IMAGEN: Grid de comprobantes con filtros en la parte superior y tabla con columnas: Proveedor, Número, Fecha, Tipo, Bases, IVA, Total, Estado, ícono engranaje]`
+
+Muestra todos los comprobantes importados del SRI con su estado contable.
+
+#### Estados
+
+| Estado | Color | Significado |
+|---|---|---|
+| **pendiente** | Amarillo | Falta asignar cuentas contables |
+| **listo** | Verde | Cuentas asignadas, listo para generar asiento |
+| **contabilizado** | Gris | Asiento ya generado en el diario |
+
+#### Filtros disponibles
+- Año, mes, tipo de comprobante, estado, búsqueda por RUC o nombre
+
+#### Asignar cuentas a un comprobante
+
+`[IMAGEN: Fila expandida mostrando el formulario de asignación de cuentas con 4 selectores: Gasto/Costo, IVA en Compras, Retención, Cuentas por Pagar]`
+
+1. Haz clic en **▼** en cualquier fila para expandirla
+2. Asigna las cuentas contables:
+
+| Campo | Cuenta típica del plan |
+|---|---|
+| Gasto / Costo | `5.02.xx` Gastos administrativos o de venta |
+| IVA en Compras | `1.01.05.01` Crédito tributario IVA |
+| Retención *(si aplica)* | `1.01.05.02` Crédito tributario Renta |
+| Cuentas por Pagar | `2.01.01.01` Proveedores — Corriente |
+
+3. Marca **"Guardar como regla para futuros comprobantes"** si quieres que el sistema aplique estas cuentas automáticamente la próxima vez que llegue una factura de este mismo proveedor
+4. Clic en **Guardar** → el comprobante pasa a estado **listo**
+
+> Puedes asignar cuentas a uno, varios, o todos los comprobantes antes de generar los diarios. No es necesario procesar todos a la vez.
+
+#### Crear regla desde el grid
+
+Clic en el ícono **⚙️** al final de cualquier fila para abrir directamente el formulario de regla de mapeo pre-llenado con el RUC y nombre del proveedor.
+
+#### Aplicar reglas automáticamente
+
+El botón **Aplicar reglas** recorre todos los comprobantes en estado **pendiente** y les asigna automáticamente las cuentas según las reglas guardadas para cada proveedor.
+
+#### Generar diarios contables
+
+`[IMAGEN: Barra verde en la parte inferior del grid mostrando "X comprobantes listos para generar diarios" y botón "Generar diarios"]`
+
+Cuando hay comprobantes en estado **listo**:
+1. Aparece una barra verde con el conteo
+2. Clic en **Generar diarios**
+3. El sistema crea un **Comprobante de Egreso (CE)** por cada comprobante listo
+4. El log de resultado muestra cada asiento generado
+
+**Estructura del asiento para facturas de compras:**
+
+```
+DEBE:
+  Gasto / Costo = base 0% + base gravada
+  IVA en Compras = valor IVA
+
+HABER:
+  Cuentas por Pagar = total factura
+```
+
+**Estructura del asiento para retenciones:**
+```
+DEBE:
+  Crédito Tributario (retención) = valor retenido
+
+HABER:
+  Cuentas por Pagar = valor retenido
+```
+
+---
+
+### 11.4 Reglas de Mapeo — Pestaña 3
+
+`[IMAGEN: Lista de reglas de mapeo con columnas: Tipo, Proveedor RUC, Cuenta Gasto, Cuenta Proveedor, y botones editar/eliminar]`
+
+Gestiona las reglas que el sistema aplica automáticamente al importar nuevos comprobantes.
+
+#### Crear una regla manualmente
+
+1. Clic en **+ Nueva regla**
+2. Selecciona el **tipo** de comprobante
+3. Ingresa el **RUC del proveedor** (déjalo vacío para que aplique a todos los proveedores de ese tipo)
+4. Asigna las cuentas contables
+5. Clic en **Guardar regla**
+
+#### Crear regla desde el grid (recomendado)
+
+En la pestaña Comprobantes, clic en **⚙️** de cualquier fila → se abre el formulario pre-llenado con el RUC y nombre del proveedor.
+
+---
+
+### 11.5 Flujo completo recomendado
+
+```
+Cada mes:
+1. SRI en Línea → descargar TXT de comprobantes recibidos
+2. Integración SRI → Importar CSV → seleccionar período y archivo → Confirmar
+3. Comprobantes → revisar registros importados
+4. Clic "Aplicar reglas" → los proveedores con regla guardada pasan a "listo" automáticamente
+5. Para los que quedan "pendiente" → asignar cuentas manualmente (▼) y guardar regla
+6. Cuando todos estén "listo" → Generar diarios
+7. Verificar en Reportes → Balance de Comprobación
+```
+
+---
+
 ## Preguntas Frecuentes
 
 **¿Puedo manejar varias empresas?**

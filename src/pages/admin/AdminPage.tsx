@@ -110,16 +110,29 @@ export function AdminPage() {
     async function crearEmpresa() {
         if (!fNombre || !fRuc || !fMonedaId) return
         setGuardandoEmp(true)
-        const qiEmp = qiEmpresas.find(e => e.id === qiSelId)
+        const qiEmp   = qiEmpresas.find(e => e.id === qiSelId)
+        const nuevaId = crypto.randomUUID()   // UUID pre-generado para evitar SELECT post-insert
+
         const { error: e } = await supabase.from('lp_empresas').insert({
-            nombre:       fNombre,
-            razon_social: fRazonSocial || fNombre,
-            ruc:          fRuc,
-            moneda_id:    fMonedaId,
+            id:            nuevaId,
+            nombre:        fNombre,
+            razon_social:  fRazonSocial || fNombre,
+            ruc:           fRuc,
+            moneda_id:     fMonedaId,
             qi_empresa_id: qiEmp?.id ?? null,
-            activa:       true,
+            activa:        true,
         })
         if (e) { setError(e.message); setGuardandoEmp(false); return }
+
+        // Asignar admin para que RLS SELECT devuelva la empresa
+        const { error: e2 } = await supabase.from('lp_usuarios_empresa').insert({
+            user_id:    user!.id,
+            empresa_id: nuevaId,
+            rol:        'admin_conta',
+            activo:     true,
+        })
+        if (e2) { setError(e2.message); setGuardandoEmp(false); return }
+
         setShowModalEmp(false)
         setFNombre(''); setFRazonSocial(''); setFRuc(''); setQiSelId('')
         flash('Empresa creada correctamente')

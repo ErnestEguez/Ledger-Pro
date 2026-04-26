@@ -73,6 +73,7 @@ const navigation: NavItem[] = [
     { to: '/presupuesto',      icon: Target,  label: 'Presupuesto' },
     { to: '/cierre-contable',  icon: Lock,    label: 'Cierre Contable' },
     { to: '/integracion-qi',   icon: Zap,     label: 'Integración QI' },
+    { to: '/integracion-sri',  icon: FileText, label: 'Integración SRI' },
     { to: '/configuracion',    icon: Settings, label: 'Configuración' },
 ]
 

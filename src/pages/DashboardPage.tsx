@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { BookOpen, FileText, BarChart2, TrendingUp, AlertCircle, LogOut, RefreshCw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
@@ -59,7 +59,7 @@ interface Resumen {
 }
 
 export function DashboardPage() {
-    const { empresaActiva } = useAuth()
+    const { empresaActiva, user } = useAuth()
     const [resumen, setResumen] = useState<Resumen>({
         total_cuentas: 0,
         total_comprobantes: 0,
@@ -122,6 +122,9 @@ export function DashboardPage() {
     const sym = moneda?.simbolo ?? '$'
 
     if (!empresaActiva) {
+        if (user?.email === 'admin@billenniumsystem.com') {
+            return <Navigate to="/admin" replace />
+        }
         return <SinEmpresa />
     }
 
