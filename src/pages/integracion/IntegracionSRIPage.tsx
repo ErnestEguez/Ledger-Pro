@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
 import {
-    Upload, FileText, CheckCircle, AlertCircle, Loader2,
+    Upload, CheckCircle, AlertCircle, Loader2,
     Settings, List, Search, ChevronDown, ChevronUp, Zap, X, Plus, Trash2,
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
@@ -36,6 +36,9 @@ interface FilaParsed {
 
 interface Comprobante extends FilaParsed {
     id:                  string
+    tipo:                TipoDoc
+    año:                 number
+    mes:                 number
     estado:              'pendiente' | 'listo' | 'contabilizado'
     cuenta_gasto_id?:    string
     cuenta_iva_id?:      string
